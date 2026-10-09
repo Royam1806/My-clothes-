@@ -21,11 +21,23 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.6);
         }
+        
+        /* Gazarot / Apparel Cutout Styles */
+        .top-cutout {
+            clip-path: polygon(25% 0%, 75% 0%, 100% 25%, 80% 40%, 75% 25%, 75% 100%, 25% 100%, 25% 25%, 20% 40%, 0% 25%);
+        }
+        .bottom-cutout {
+            clip-path: polygon(15% 0%, 85% 0%, 90% 100%, 55% 100%, 50% 30%, 45% 100%, 10% 100%);
+        }
+        .shoes-cutout {
+            clip-path: inset(0 0 0 0 round 16px);
+        }
+
         .item-slot {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .item-slot:hover {
-            transform: scale(1.02);
+            transform: scale(1.03);
         }
     </style>
 </head>
@@ -66,11 +78,11 @@
                         <label class="block text-xs font-bold text-slate-600 mb-1.5">לאן הולכים?</label>
                         <select id="event-select" class="w-full bg-white border border-slate-200 rounded-2xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-sm transition">
                             <option value="all">הכל מתאים (אקראי חכם)</option>
-                            <option value="work">💼 עבודה (FlyDubai)</option>
-                            <option value="event">🎉 אירוע / יציאה</option>
-                            <option value="gym">🏋️‍♂️ חדר כושר</option>
-                            <option value="nova">🐕 טיול עם נובה</option>
-                            <option value="casual">☕ יום-יומי / קפה</option>
+                            <option value="work">💼 עבודה / פגישה</option>
+                            <option value="event">🎉 אירוע / ערב</option>
+                            <option value="gym">🏋️‍♂️ ספורט / אימון</option>
+                            <option value="errands">🛒 סידורים / פנאי</option>
+                            <option value="casual">☕ יום-יומי</option>
                         </select>
                     </div>
 
@@ -92,28 +104,34 @@
             </div>
 
             <!-- Mannequin / Outfit Visualization -->
-            <div class="glass-card rounded-3xl p-6 shadow-xl shadow-sky-900/5 mannequin-container relative flex flex-col items-center justify-center min-h-[520px] border border-white">
-                <span class="absolute top-4 right-4 text-xs font-bold text-sky-800 bg-sky-100/80 px-3.5 py-1.5 rounded-full border border-sky-200">
-                    <i class="fa-solid fa-user-astronaut text-pink-500 ml-1"></i> תצוגת דוגמן
+            <div class="glass-card rounded-3xl p-6 shadow-xl shadow-sky-900/5 mannequin-container relative flex flex-col items-center justify-center min-h-[560px] border border-white overflow-hidden">
+                <span class="absolute top-4 right-4 text-xs font-bold text-sky-800 bg-sky-100/80 px-3.5 py-1.5 rounded-full border border-sky-200 z-10">
+                    <i class="fa-solid fa-user-astronaut text-pink-500 ml-1"></i> בובת ראווה
                 </span>
 
+                <!-- Mannequin Head & Neck Background Silhouette -->
+                <div class="absolute top-12 flex flex-col items-center opacity-20 pointer-events-none">
+                    <div class="w-16 h-20 bg-slate-400 rounded-full mb-1"></div>
+                    <div class="w-8 h-8 bg-slate-400 rounded-t-lg"></div>
+                </div>
+
                 <!-- Mannequin Outline & Clothes Stack -->
-                <div class="relative w-64 h-[440px] flex flex-col items-center justify-between py-4">
+                <div class="relative w-64 h-[480px] flex flex-col items-center justify-between py-2 z-0 mt-8">
                     
-                    <!-- Top Slot (Shirts) -->
-                    <div id="slot-top" class="item-slot w-48 h-36 border-2 border-dashed border-sky-200 rounded-2xl flex flex-col items-center justify-center text-slate-400 bg-white shadow-sm overflow-hidden relative">
+                    <!-- Top Slot (Shirts Cutout) -->
+                    <div id="slot-top" class="item-slot w-52 h-40 border-2 border-dashed border-sky-200 rounded-2xl flex flex-col items-center justify-center text-slate-400 bg-white/60 shadow-sm overflow-hidden relative">
                         <i class="fa-solid fa-shirt text-3xl mb-1 text-pink-300"></i>
                         <span class="text-xs font-semibold">חולצה / טופ</span>
                     </div>
 
-                    <!-- Bottom Slot (Pants) -->
-                    <div id="slot-bottom" class="item-slot w-44 h-40 border-2 border-dashed border-sky-200 rounded-2xl flex flex-col items-center justify-center text-slate-400 bg-white shadow-sm overflow-hidden relative">
+                    <!-- Bottom Slot (Pants Cutout) -->
+                    <div id="slot-bottom" class="item-slot w-44 h-48 border-2 border-dashed border-sky-200 rounded-2xl flex flex-col items-center justify-center text-slate-400 bg-white/60 shadow-sm overflow-hidden relative -mt-3">
                         <i class="fa-solid fa-socks text-3xl mb-1 text-sky-300"></i>
                         <span class="text-xs font-semibold">מכנסיים</span>
                     </div>
 
                     <!-- Shoes Slot -->
-                    <div id="slot-shoes" class="item-slot w-36 h-20 border-2 border-dashed border-sky-200 rounded-2xl flex flex-col items-center justify-center text-slate-400 bg-white shadow-sm overflow-hidden relative">
+                    <div id="slot-shoes" class="item-slot w-40 h-20 border-2 border-dashed border-sky-200 rounded-2xl flex flex-col items-center justify-center text-slate-400 bg-white/60 shadow-sm overflow-hidden relative">
                         <i class="fa-solid fa-shoe-prints text-2xl mb-1 text-amber-300"></i>
                         <span class="text-xs font-semibold">נעליים</span>
                     </div>
@@ -160,13 +178,13 @@
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">אירוע</label>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">אירוע מתאים</label>
                             <select id="item-event" required class="w-full bg-white border border-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-sm transition">
                                 <option value="casual">יום-יומי</option>
-                                <option value="work">עבודה</option>
-                                <option value="event">אירוע / יציאה</option>
-                                <option value="gym">חדר כושר</option>
-                                <option value="nova">טיול עם נובה</option>
+                                <option value="work">עבודה / פגישה</option>
+                                <option value="event">אירוע / ערב</option>
+                                <option value="gym">ספורט / אימון</option>
+                                <option value="errands">סידורים / פנאי</option>
                             </select>
                         </div>
                         <div>
@@ -376,17 +394,19 @@
             }
             const chosenShoes = compatibleShoes[Math.floor(Math.random() * compatibleShoes.length)];
 
-            updateSlot('slot-top', chosenTop, 'חולצה');
-            updateSlot('slot-bottom', chosenBottom, 'מכנסיים');
-            updateSlot('slot-shoes', chosenShoes, 'נעליים');
+            updateSlot('slot-top', chosenTop, 'חולצה', 'top-cutout');
+            updateSlot('slot-bottom', chosenBottom, 'מכנסיים', 'bottom-cutout');
+            updateSlot('slot-shoes', chosenShoes, 'נעליים', 'shoes-cutout');
         }
 
-        function updateSlot(slotId, item, placeholder) {
+        function updateSlot(slotId, item, placeholder, cutoutClass) {
             const slot = document.getElementById(slotId);
             if (item) {
                 slot.innerHTML = `
-                    <img src="${item.image}" class="w-full h-full object-cover">
-                    <div class="absolute bottom-0 inset-x-0 bg-white/90 backdrop-blur-sm text-slate-800 text-[10px] text-center py-1 truncate px-2 flex justify-between items-center font-bold border-t border-slate-100">
+                    <div class="w-full h-full ${cutoutClass} overflow-hidden relative">
+                        <img src="${item.image}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-sm text-slate-800 text-[10px] text-center py-0.5 truncate px-2 flex justify-between items-center font-bold border-t border-slate-100 z-10">
                         <span>${item.name}</span>
                         <span class="text-pink-500 font-extrabold">${colorMap[item.color] || ''}</span>
                     </div>
