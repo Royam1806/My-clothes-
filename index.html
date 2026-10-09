@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartStyle - הארון הדיגיטלי והסטייליסט האישי</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;800&display=swap');
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .mannequin-container {
+            background: radial-gradient(circle, rgba(30,41,59,1) 0%, rgba(15,23,42,1) 100%);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .item-slot {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .item-slot:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-indigo-600 rounded-xl text-white shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-shirt text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-pink-400 bg-clip-text text-transparent">SmartStyle</h1>
+                    <p class="text-xs text-slate-400">הארון הדיגיטלי והסטייליסט האישי שלך</p>
+                </div>
+            </div>
+            <div class="text-xs bg-slate-800 text-slate-300 px-3 py-1.5 rounded-full border border-slate-700">
+                <i class="fa-solid fa-layer-group text-indigo-400 ml-1"></i> <span id="item-count">0</span> פריטים בארון
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left / Top Controls & Mannequin Display -->
+        <section class="lg:col-span-7 flex flex-col gap-6">
+            
+            <!-- Outfit Generator Controls -->
+            <div class="glass-card rounded-2xl p-5 shadow-xl">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-300">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> הרכבת לוק אישי
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                    <!-- Event Picker -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">לאן הולכים?</label>
+                        <select id="event-select" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                            <option value="all">הכל מתאים (אקראי)</option>
+                            <option value="work">💼 עבודה (FlyDubai)</option>
+                            <option value="event">🎉 אירוע / יציאה</option>
+                            <option value="gym">🏋️‍♂️ חדר כושר</option>
+                            <option value="nova">🐕 טיול עם נובה</option>
+                            <option value="casual">☕ יום-יומי / קפה</option>
+                        </select>
+                    </div>
+
+                    <!-- Weather Picker -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">מזג אוויר</label>
+                        <select id="weather-select" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                            <option value="all">כל עונה</option>
+                            <option value="summer">☀️ קיץ / חם</option>
+                            <option value="winter">🌧️ חורף / קר</option>
+                            <option value="transition">🍂 עונת מעבר</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="generateOutfit()" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition transform active:scale-95">
+                    <i class="fa-solid fa-shuffle"></i> התאם לי לוק מושלם!
+                </button>
+            </div>
+
+            <!-- Mannequin / Outfit Visualization -->
+            <div class="glass-card rounded-2xl p-6 shadow-xl mannequin-container relative flex flex-col items-center justify-center min-h-[520px]">
+                <span class="absolute top-4 right-4 text-xs font-semibold text-slate-400 bg-slate-800/80 px-3 py-1 rounded-full border border-slate-700">
+                    <i class="fa-solid fa-user-astronaut text-indigo-400 ml-1"></i> תצוגת דוגמן
+                </span>
+
+                <!-- Mannequin Outline & Clothes Stack -->
+                <div class="relative w-64 h-[440px] flex flex-col items-center justify-between py-4">
+                    
+                    <!-- Top Slot (Shirts) -->
+                    <div id="slot-top" class="item-slot w-48 h-36 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/50 overflow-hidden relative">
+                        <i class="fa-solid fa-shirt text-2xl mb-1"></i>
+                        <span class="text-xs">חולצה / טופ</span>
+                    </div>
+
+                    <!-- Bottom Slot (Pants) -->
+                    <div id="slot-bottom" class="item-slot w-44 h-40 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/50 overflow-hidden relative">
+                        <i class="fa-solid fa-socks text-2xl mb-1"></i>
+                        <span class="text-xs">מכנסיים</span>
+                    </div>
+
+                    <!-- Shoes Slot -->
+                    <div id="slot-shoes" class="item-slot w-36 h-20 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/50 overflow-hidden relative">
+                        <i class="fa-solid fa-shoe-prints text-xl mb-1"></i>
+                        <span class="text-xs">נעליים</span>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right / Bottom Closet & Item Upload -->
+        <section class="lg:col-span-5 flex flex-col gap-6">
+
+            <!-- Add Item Form -->
+            <div class="glass-card rounded-2xl p-5 shadow-xl">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-300">
+                    <i class="fa-solid fa-plus-circle"></i> הוספת בגד חדש לארון
+                </h2>
+
+                <form id="add-item-form" onsubmit="handleAddItem(event)" class="flex flex-col gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">שם הפריט</label>
+                        <input type="text" id="item-name" required placeholder="לדוגמה: חולצה שחורה מכופתרת" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">סוג פריט</label>
+                            <select id="item-type" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                                <option value="top">חולצה / ג'קט</option>
+                                <option value="bottom">מכנסיים</option>
+                                <option value="shoes">נעליים</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">מזג אוויר</label>
+                            <select id="item-weather" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                                <option value="all">כל השנה</option>
+                                <option value="summer">קיץ</option>
+                                <option value="winter">חורף</option>
+                                <option value="transition">מעבר</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">אירועים מתאימים</label>
+                        <select id="item-event" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                            <option value="casual">יום-יומי</option>
+                            <option value="work">עבודה</option>
+                            <option value="event">אירוע / יציאה</option>
+                            <option value="gym">חדר כושר</option>
+                            <option value="nova">טיול עם נובה</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">תמונת הפריט</label>
+                        <input type="file" id="item-image" accept="image/*" required class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
+                    </div>
+
+                    <button type="submit" class="mt-2 py-3 bg-slate-800 hover:bg-slate-700 text-indigo-300 font-semibold rounded-xl border border-indigo-500/30 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> שמור בארון
+                    </button>
+                </form>
+            </div>
+
+            <!-- Closet Inventory -->
+            <div class="glass-card rounded-2xl p-5 shadow-xl flex-1 flex flex-col">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-300">
+                    <i class="fa-solid fa-boxes-packing"></i> הארון שלי
+                </h2>
+
+                <div id="closet-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-3 overflow-y-auto max-h-[320px] p-1">
+                    <!-- Items rendered here dynamically -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        let closet = JSON.parse(localStorage.getItem('smartstyle_closet')) || [];
+
+        function saveCloset() {
+            localStorage.setItem('smartstyle_closet', JSON.stringify(closet));
+            renderCloset();
+        }
+
+        function handleAddItem(e) {
+            e.preventDefault();
+            const name = document.getElementById('item-name').value;
+            const type = document.getElementById('item-type').value;
+            const weather = document.getElementById('item-weather').value;
+            const event = document.getElementById('item-event').value;
+            const fileInput = document.getElementById('item-image');
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const newItem = {
+                        id: Date.now(),
+                        name,
+                        type,
+                        weather,
+                        event,
+                        image: e.target.result
+                    };
+                    closet.push(newItem);
+                    saveCloset();
+                    document.getElementById('add-item-form').reset();
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        function removeItem(id) {
+            closet = closet.filter(item => item.id !== id);
+            saveCloset();
+        }
+
+        function renderCloset() {
+            const grid = document.getElementById('closet-grid');
+            document.getElementById('item-count').textContent = closet.length;
+
+            if (closet.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-8 text-slate-500 text-xs">הארון ריק כרגע.<br>הוסף בגדים כדי להתחיל!</div>`;
+                return;
+            }
+
+            grid.innerHTML = closet.map(item => `
+                <div class="relative group bg-slate-800 rounded-xl overflow-hidden border border-slate-700 flex flex-col items-center p-2">
+                    <img src="${item.image}" class="w-full h-20 object-cover rounded-lg mb-1">
+                    <span class="text-[10px] text-slate-300 truncate w-full text-center">${item.name}</span>
+                    <button onclick="removeItem(${item.id})" class="absolute top-1 left-1 bg-red-600/80 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition">
+                        ✕
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function generateOutfit() {
+            const selectedEvent = document.getElementById('event-select').value;
+            const selectedWeather = document.getElementById('weather-select').value;
+
+            const filterItem = (type) => {
+                let items = closet.filter(i => i.type === type);
+                if (selectedEvent !== 'all') {
+                    items = items.filter(i => i.event === selectedEvent || i.event === 'casual');
+                }
+                if (selectedWeather !== 'all') {
+                    items = items.filter(i => i.weather === selectedWeather || i.weather === 'all');
+                }
+                if (items.length === 0) {
+                    items = closet.filter(i => i.type === type); // Fallback to any item of type
+                }
+                return items[Math.floor(Math.random() * items.length)];
+            };
+
+            const top = filterItem('top');
+            const bottom = filterItem('bottom');
+            const shoes = filterItem('shoes');
+
+            updateSlot('slot-top', top, 'חולצה');
+            updateSlot('slot-bottom', bottom, 'מכנסיים');
+            updateSlot('slot-shoes', shoes, 'נעליים');
+        }
+
+        function updateSlot(slotId, item, placeholder) {
+            const slot = document.getElementById(slotId);
+            if (item) {
+                slot.innerHTML = `
+                    <img src="${item.image}" class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 inset-x-0 bg-slate-900/80 text-white text-[10px] text-center py-0.5 truncate px-1">
+                        ${item.name}
+                    </div>
+                `;
+            } else {
+                slot.innerHTML = `<span class="text-xs text-slate-500">אין ${placeholder} מתאימה</span>`;
+            }
+        }
+
+        renderCloset();
+    </script>
+</body>
+</html>
