@@ -28,6 +28,9 @@
         }
         
         /* Gazarot / Apparel Cutout Styles */
+        .jacket-cutout {
+            clip-path: polygon(15% 0%, 85% 0%, 100% 20%, 85% 35%, 80% 20%, 80% 100%, 20% 100%, 20% 20%, 15% 35%, 0% 20%);
+        }
         .top-cutout {
             clip-path: polygon(25% 0%, 75% 0%, 100% 25%, 80% 40%, 75% 25%, 75% 100%, 25% 100%, 25% 25%, 20% 40%, 0% 25%);
         }
@@ -72,11 +75,21 @@
         <!-- Left / Top Controls & Mannequin Display -->
         <section class="lg:col-span-7 flex flex-col gap-6">
             
-            <!-- Outfit Generator Controls -->
+            <!-- Outfit Generator Controls & Live Weather -->
             <div class="glass-card rounded-3xl p-6 shadow-2xl">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-300">
-                    <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> הרכבת לוק חכם ומותאם צבעים
-                </h2>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold flex items-center gap-2 text-indigo-300">
+                        <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> הרכבת לוק חכם ומותאם צבעים
+                    </h2>
+                    <button onclick="fetchLiveWeather()" class="text-xs bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/60 text-cyan-300 px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-cloud-sun text-amber-400"></i> <span id="weather-btn-text">מזג אוויר בלייב</span>
+                    </button>
+                </div>
+
+                <div id="weather-info-box" class="hidden mb-4 p-3 bg-slate-800/80 rounded-2xl border border-indigo-500/30 flex justify-between items-center text-xs">
+                    <span class="text-slate-300 font-semibold" id="weather-location">📍 מיקום: מזהה...</span>
+                    <span class="text-cyan-300 font-bold" id="weather-temp">--°C</span>
+                </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                     <!-- Event Picker -->
@@ -110,35 +123,41 @@
             </div>
 
             <!-- Mannequin / Outfit Visualization -->
-            <div class="glass-card rounded-3xl p-6 shadow-2xl mannequin-container relative flex flex-col items-center justify-center min-h-[560px] overflow-hidden">
+            <div class="glass-card rounded-3xl p-6 shadow-2xl mannequin-container relative flex flex-col items-center justify-center min-h-[620px] overflow-hidden">
                 <span class="absolute top-4 right-4 text-xs font-bold text-cyan-300 bg-cyan-950/60 px-3.5 py-1.5 rounded-full border border-cyan-800/50 z-10">
                     <i class="fa-solid fa-user-astronaut text-indigo-400 ml-1"></i> בובת ראווה
                 </span>
 
                 <!-- Mannequin Head & Neck Background Silhouette -->
-                <div class="absolute top-12 flex flex-col items-center opacity-20 pointer-events-none">
+                <div class="absolute top-10 flex flex-col items-center opacity-20 pointer-events-none">
                     <div class="w-16 h-20 bg-slate-500 rounded-full mb-1"></div>
                     <div class="w-8 h-8 bg-slate-500 rounded-t-lg"></div>
                 </div>
 
                 <!-- Mannequin Outline & Clothes Stack -->
-                <div class="relative w-64 h-[480px] flex flex-col items-center justify-between py-2 z-0 mt-8">
+                <div class="relative w-64 h-[530px] flex flex-col items-center justify-between py-2 z-0 mt-6">
                     
+                    <!-- Jacket / Outerwear Slot -->
+                    <div id="slot-jacket" class="item-slot w-56 h-36 border-2 border-dashed border-slate-700/80 rounded-2xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/40 overflow-hidden relative">
+                        <i class="fa-solid fa-vest-patches text-2xl mb-1 text-purple-400/60"></i>
+                        <span class="text-xs font-semibold">ג'קט / מעיל</span>
+                    </div>
+
                     <!-- Top Slot (Shirts Cutout) -->
-                    <div id="slot-top" class="item-slot w-52 h-40 border-2 border-dashed border-slate-700/80 rounded-2xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/40 overflow-hidden relative">
-                        <i class="fa-solid fa-shirt text-3xl mb-1 text-indigo-400/60"></i>
+                    <div id="slot-top" class="item-slot w-52 h-36 border-2 border-dashed border-slate-700/80 rounded-2xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/40 overflow-hidden relative -mt-3">
+                        <i class="fa-solid fa-shirt text-2xl mb-1 text-indigo-400/60"></i>
                         <span class="text-xs font-semibold">חולצה / טופ</span>
                     </div>
 
                     <!-- Bottom Slot (Pants Cutout) -->
-                    <div id="slot-bottom" class="item-slot w-44 h-48 border-2 border-dashed border-slate-700/80 rounded-2xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/40 overflow-hidden relative -mt-3">
-                        <i class="fa-solid fa-socks text-3xl mb-1 text-cyan-400/60"></i>
+                    <div id="slot-bottom" class="item-slot w-44 h-44 border-2 border-dashed border-slate-700/80 rounded-2xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/40 overflow-hidden relative -mt-3">
+                        <i class="fa-solid fa-socks text-2xl mb-1 text-cyan-400/60"></i>
                         <span class="text-xs font-semibold">מכנסיים</span>
                     </div>
 
                     <!-- Shoes Slot -->
                     <div id="slot-shoes" class="item-slot w-40 h-20 border-2 border-dashed border-slate-700/80 rounded-2xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/40 overflow-hidden relative">
-                        <i class="fa-solid fa-shoe-prints text-2xl mb-1 text-teal-400/60"></i>
+                        <i class="fa-solid fa-shoe-prints text-xl mb-1 text-teal-400/60"></i>
                         <span class="text-xs font-semibold">נעליים</span>
                     </div>
 
@@ -179,14 +198,15 @@
                 <form id="add-item-form" onsubmit="handleAddItem(event)" class="flex flex-col gap-3.5">
                     <div>
                         <label class="block text-xs font-bold text-slate-400 mb-1">שם הפריט</label>
-                        <input type="text" id="item-name" required placeholder="לדוגמה: חולצה מכופתרת כחולה" class="w-full bg-slate-800/80 border border-slate-700/80 text-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                        <input type="text" id="item-name" required placeholder="לדוגמה: מעיל ג'ינס כחול" class="w-full bg-slate-800/80 border border-slate-700/80 text-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-bold text-slate-400 mb-1">סוג פריט</label>
                             <select id="item-type" required class="w-full bg-slate-800/80 border border-slate-700/80 text-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
-                                <option value="top">חולצה / ג'קט</option>
+                                <option value="top">חולצה / טופ</option>
+                                <option value="jacket">ג'קט / מעיל (שכבה עליונה)</option>
                                 <option value="bottom">מכנסיים</option>
                                 <option value="shoes">נעליים</option>
                             </select>
@@ -260,7 +280,7 @@
     <script>
         let closet = JSON.parse(localStorage.getItem('smartstyle_closet')) || [];
         let savedOutfits = JSON.parse(localStorage.getItem('smartstyle_saved_outfits')) || [];
-        let currentOutfit = { top: null, bottom: null, shoes: null };
+        let currentOutfit = { jacket: null, top: null, bottom: null, shoes: null };
 
         const colorMap = {
             black: "שחור", white: "לבן", grey: "אפור",
@@ -291,7 +311,6 @@
             renderSavedOutfits();
         }
 
-        // Compress image to fit localStorage limits easily
         function compressImage(file, callback) {
             const reader = new FileReader();
             reader.onload = function(event) {
@@ -395,11 +414,19 @@
         function saveNewItem(name, type, weather, event, color, image) {
             const newItem = {
                 id: Date.now(),
-                name, type, weather, event, color, image
+                name, type, weather, event, color, image, inLaundry: false
             };
             closet.push(newItem);
             saveCloset();
             document.getElementById('add-item-form').reset();
+        }
+
+        function toggleLaundry(id) {
+            const item = closet.find(i => i.id === id);
+            if (item) {
+                item.inLaundry = !item.inLaundry;
+                saveCloset();
+            }
         }
 
         function removeItem(id) {
@@ -424,43 +451,104 @@
             }
 
             grid.innerHTML = closet.map(item => `
-                <div class="relative group bg-slate-800/60 rounded-2xl overflow-hidden border border-slate-700/60 flex flex-col items-center p-2">
+                <div class="relative group bg-slate-800/60 rounded-2xl overflow-hidden border border-slate-700/60 flex flex-col items-center p-2 ${item.inLaundry ? 'opacity-40 grayscale' : ''}">
                     <img src="${item.image}" class="w-full h-20 object-cover rounded-xl mb-1">
                     <span class="text-[10px] text-slate-300 truncate w-full text-center font-bold">${item.name}</span>
                     <span class="text-[9px] text-cyan-400 font-semibold">${colorMap[item.color] || item.color}</span>
-                    <button onclick="removeItem(${item.id})" class="absolute top-1.5 left-1.5 bg-rose-600/90 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition shadow-sm">
+                    
+                    <!-- Laundry Toggle Button -->
+                    <button onclick="toggleLaundry(${item.id})" title="${item.inLaundry ? 'החזר מאזור הכביסה' : 'העבר לכביסה'}" class="absolute top-1.5 right-1.5 bg-slate-900/90 text-amber-400 hover:text-amber-300 rounded-full w-6 h-6 flex items-center justify-center text-[10px] shadow-sm z-10">
+                        <i class="fa-solid fa-shirt"></i>
+                    </button>
+
+                    <!-- Delete Button -->
+                    <button onclick="removeItem(${item.id})" class="absolute top-1.5 left-1.5 bg-rose-600/90 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition shadow-sm z-10">
                         ✕
                     </button>
                 </div>
             `).join('');
         }
 
+        // Feature 1: Live Weather Fetching via Open-Meteo API
+        function fetchLiveWeather() {
+            const btnText = document.getElementById('weather-btn-text');
+            btnText.textContent = "מזהה מיקום...";
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    try {
+                        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                        const data = await res.json();
+                        const temp = Math.round(data.current_weather.temperature);
+
+                        document.getElementById('weather-info-box').classList.remove('hidden');
+                        document.getElementById('weather-location').textContent = `📍 מזהה מזג אוויר מקומי`;
+                        document.getElementById('weather-temp').textContent = `${temp}°C`;
+
+                        const weatherSelect = document.getElementById('weather-select');
+                        if (temp > 24) {
+                            weatherSelect.value = "summer";
+                        } else if (temp < 17) {
+                            weatherSelect.value = "winter";
+                        } else {
+                            weatherSelect.value = "transition";
+                        }
+
+                        btnText.textContent = "עודכן בלייב!";
+                    } catch (e) {
+                        alert("שגיאה במשיכת נתוני מזג האוויר.");
+                        btnText.textContent = "מזג אוויר בלייב";
+                    }
+                }, () => {
+                    alert("אנא אפשר גישה למיקום בדפדפן כדי למשוך מזג אוויר.");
+                    btnText.textContent = "מזג אוויר בלייב";
+                });
+            } else {
+                alert("הדפדפן שלך אינו תומך בזיהוי מיקום.");
+            }
+        }
+
         function generateOutfit() {
             const selectedEvent = document.getElementById('event-select').value;
             const selectedWeather = document.getElementById('weather-select').value;
 
+            // Filter out items in laundry
+            const activeCloset = closet.filter(i => !i.inLaundry);
+
             const filterByType = (type) => {
-                let items = closet.filter(i => i.type === type);
+                let items = activeCloset.filter(i => i.type === type);
                 if (selectedEvent !== 'all') {
                     items = items.filter(i => i.event === selectedEvent || i.event === 'casual');
                 }
                 if (selectedWeather !== 'all') {
                     items = items.filter(i => i.weather === selectedWeather || i.weather === 'all');
                 }
-                if (items.length === 0) items = closet.filter(i => i.type === type);
+                if (items.length === 0) items = activeCloset.filter(i => i.type === type);
                 return items;
             };
 
+            const jackets = filterByType('jacket');
             const tops = filterByType('top');
             const bottoms = filterByType('bottom');
             const shoesList = filterByType('shoes');
 
-            if (tops.length === 0 && bottoms.length === 0 && shoesList.length === 0) {
-                alert("אנא הוסף פריטים לארון ראשית!");
+            if (tops.length === 0 && bottoms.length === 0 && shoesList.length === 0 && jackets.length === 0) {
+                alert("אנא הוסף פריטים זמינים (שאינם בכביסה) לארון ראשית!");
                 return;
             }
 
             const chosenTop = tops[Math.floor(Math.random() * tops.length)] || null;
+
+            // Optional Jacket logic for winter / transition weather
+            let chosenJacket = null;
+            if ((selectedWeather === 'winter' || selectedWeather === 'transition' || selectedWeather === 'all') && jackets.length > 0) {
+                if (Math.random() > 0.3) {
+                    chosenJacket = jackets[Math.floor(Math.random() * jackets.length)];
+                }
+            }
 
             let compatibleBottoms = bottoms;
             if (chosenTop && chosenTop.color && matchingRules[chosenTop.color]) {
@@ -478,17 +566,18 @@
             }
             const chosenShoes = compatibleShoes[Math.floor(Math.random() * compatibleShoes.length)] || null;
 
-            currentOutfit = { top: chosenTop, bottom: chosenBottom, shoes: chosenShoes };
+            currentOutfit = { jacket: chosenJacket, top: chosenTop, bottom: chosenBottom, shoes: chosenShoes };
             displayOutfit(currentOutfit);
         }
 
         function displayOutfit(outfit) {
+            updateSlot('slot-jacket', outfit.jacket, 'ג'קט / מעיל', 'jacket-cutout');
             updateSlot('slot-top', outfit.top, 'חולצה', 'top-cutout');
             updateSlot('slot-bottom', outfit.bottom, 'מכנסיים', 'bottom-cutout');
             updateSlot('slot-shoes', outfit.shoes, 'נעליים', 'shoes-cutout');
 
             const actionsDiv = document.getElementById('outfit-actions');
-            if (outfit.top || outfit.bottom || outfit.shoes) {
+            if (outfit.top || outfit.bottom || outfit.shoes || outfit.jacket) {
                 actionsDiv.classList.remove('hidden');
             } else {
                 actionsDiv.classList.add('hidden');
@@ -508,15 +597,16 @@
                     </div>
                 `;
             } else {
-                slot.innerHTML = `<span class="text-xs text-slate-500">אין ${placeholder} מתאימה</span>`;
+                slot.innerHTML = `<span class="text-xs text-slate-500">אין ${placeholder}</span>`;
             }
         }
 
         function saveCurrentOutfit() {
-            if (!currentOutfit.top && !currentOutfit.bottom && !currentOutfit.shoes) return;
+            if (!currentOutfit.top && !currentOutfit.bottom && !currentOutfit.shoes && !currentOutfit.jacket) return;
             
             const newSavedOutfit = {
                 id: Date.now(),
+                jacket: currentOutfit.jacket,
                 top: currentOutfit.top,
                 bottom: currentOutfit.bottom,
                 shoes: currentOutfit.shoes,
@@ -536,7 +626,7 @@
         function loadSavedOutfit(id) {
             const outfit = savedOutfits.find(o => o.id === id);
             if (outfit) {
-                currentOutfit = { top: outfit.top, bottom: outfit.bottom, shoes: outfit.shoes };
+                currentOutfit = { jacket: outfit.jacket, top: outfit.top, bottom: outfit.bottom, shoes: outfit.shoes };
                 displayOutfit(currentOutfit);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
@@ -555,9 +645,10 @@
                         ✕
                     </button>
                     <div class="flex gap-2 mb-2 items-center justify-center bg-slate-900/60 p-2 rounded-xl border border-slate-800">
-                        ${outfit.top ? `<img src="${outfit.top.image}" class="w-12 h-12 object-cover rounded-lg">` : ''}
-                        ${outfit.bottom ? `<img src="${outfit.bottom.image}" class="w-12 h-12 object-cover rounded-lg">` : ''}
-                        ${outfit.shoes ? `<img src="${outfit.shoes.image}" class="w-12 h-12 object-cover rounded-lg">` : ''}
+                        ${outfit.jacket ? `<img src="${outfit.jacket.image}" class="w-10 h-10 object-cover rounded-lg">` : ''}
+                        ${outfit.top ? `<img src="${outfit.top.image}" class="w-10 h-10 object-cover rounded-lg">` : ''}
+                        ${outfit.bottom ? `<img src="${outfit.bottom.image}" class="w-10 h-10 object-cover rounded-lg">` : ''}
+                        ${outfit.shoes ? `<img src="${outfit.shoes.image}" class="w-10 h-10 object-cover rounded-lg">` : ''}
                     </div>
                     <div class="flex justify-between items-center text-[11px] text-slate-400 font-bold px-1">
                         <span>לוק מ-${outfit.date}</span>
@@ -571,6 +662,7 @@
 
         function shareCurrentOutfit() {
             const details = [];
+            if (currentOutfit.jacket) details.push(`ג'קט: ${currentOutfit.jacket.name}`);
             if (currentOutfit.top) details.push(`חולצה: ${currentOutfit.top.name}`);
             if (currentOutfit.bottom) details.push(`מכנסיים: ${currentOutfit.bottom.name}`);
             if (currentOutfit.shoes) details.push(`נעליים: ${currentOutfit.shoes.name}`);
