@@ -10,16 +10,21 @@
         @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;800&display=swap');
         body {
             font-family: 'Heebo', sans-serif;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #fef3c7 100%);
-            color: #1e293b;
+            background-color: #0b0f19;
+            color: #f1f5f9;
         }
-        .mannequin-container {
-            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+        .cyber-bg {
+            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, rgba(11, 15, 25, 1) 70%);
         }
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .mannequin-container {
+            background: radial-gradient(circle at center, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
         }
         
         /* Gazarot / Apparel Cutout Styles */
@@ -38,25 +43,26 @@
         }
         .item-slot:hover {
             transform: scale(1.03);
+            border-color: #818cf8;
         }
     </style>
 </head>
-<body class="min-h-screen pb-12">
+<body class="min-h-screen pb-12 cyber-bg">
 
     <!-- Header -->
-    <header class="border-b border-sky-100 bg-white/80 sticky top-0 z-50 backdrop-blur-md shadow-sm">
+    <header class="border-b border-slate-800 bg-slate-900/60 sticky top-0 z-50 backdrop-blur-xl">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-gradient-to-tr from-amber-400 to-pink-500 rounded-2xl text-white shadow-md shadow-pink-500/20">
+                <div class="p-2.5 bg-indigo-600/20 border border-indigo-500/40 rounded-2xl text-indigo-400 shadow-lg shadow-indigo-500/20">
                     <i class="fa-solid fa-shirt text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold bg-gradient-to-r from-pink-500 via-purple-500 to-sky-500 bg-clip-text text-transparent">SmartStyle</h1>
-                    <p class="text-xs text-slate-500 font-medium">ארון דיגיטלי להתאמת צבעים ולוקים חכמים</p>
+                    <h1 class="text-2xl font-extrabold bg-gradient-to-r from-indigo-400 via-cyan-400 to-teal-300 bg-clip-text text-transparent">SmartStyle AI</h1>
+                    <p class="text-xs text-slate-400 font-medium">ארון דיגיטלי להתאמת צבעים ולוקים חכמים</p>
                 </div>
             </div>
-            <div class="text-xs font-semibold bg-sky-50 text-sky-700 px-3.5 py-2 rounded-full border border-sky-200 shadow-sm">
-                <i class="fa-solid fa-layer-group text-pink-500 ml-1"></i> <span id="item-count">0</span> פריטים בארון
+            <div class="text-xs font-semibold bg-indigo-950/60 text-indigo-300 px-3.5 py-2 rounded-full border border-indigo-800/50 shadow-inner">
+                <i class="fa-solid fa-layer-group text-cyan-400 ml-1"></i> <span id="item-count">0</span> פריטים בארון
             </div>
         </div>
     </header>
@@ -67,16 +73,16 @@
         <section class="lg:col-span-7 flex flex-col gap-6">
             
             <!-- Outfit Generator Controls -->
-            <div class="glass-card rounded-3xl p-6 shadow-xl shadow-sky-900/5">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800">
-                    <i class="fa-solid fa-wand-magic-sparkles text-pink-500"></i> הרכבת לוק חכם ומותאם צבעים
+            <div class="glass-card rounded-3xl p-6 shadow-2xl">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-300">
+                    <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> הרכבת לוק חכם ומותאם צבעים
                 </h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                     <!-- Event Picker -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1.5">לאן הולכים?</label>
-                        <select id="event-select" class="w-full bg-white border border-slate-200 rounded-2xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-sm transition">
+                        <label class="block text-xs font-bold text-slate-400 mb-1.5">לאן הולכים?</label>
+                        <select id="event-select" class="w-full bg-slate-800/80 border border-slate-700/80 text-slate-200 rounded-2xl p-3 text-sm focus:outline-none focus:border-indigo-500 transition">
                             <option value="all">הכל מתאים (אקראי חכם)</option>
                             <option value="work">💼 עבודה / פגישה</option>
                             <option value="event">🎉 אירוע / ערב</option>
@@ -88,8 +94,8 @@
 
                     <!-- Weather Picker -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1.5">מזג אוויר</label>
-                        <select id="weather-select" class="w-full bg-white border border-slate-200 rounded-2xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-sm transition">
+                        <label class="block text-xs font-bold text-slate-400 mb-1.5">מזג אוויר</label>
+                        <select id="weather-select" class="w-full bg-slate-800/80 border border-slate-700/80 text-slate-200 rounded-2xl p-3 text-sm focus:outline-none focus:border-indigo-500 transition">
                             <option value="all">כל עונה</option>
                             <option value="summer">☀️ קיץ / חם</option>
                             <option value="winter">🌧️ חורף / קר</option>
@@ -98,41 +104,41 @@
                     </div>
                 </div>
 
-                <button onclick="generateOutfit()" class="w-full py-4 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 hover:opacity-95 text-white font-extrabold rounded-2xl shadow-lg shadow-pink-500/25 flex items-center justify-center gap-2 transition transform active:scale-95 text-base">
-                    <i class="fa-solid fa-palette text-lg"></i> התאם לי לוק צבעוני!
+                <button onclick="generateOutfit()" class="w-full py-4 bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:opacity-95 text-white font-extrabold rounded-2xl shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 transition transform active:scale-95 text-base">
+                    <i class="fa-solid fa-palette text-lg"></i> התאם לי לוק עתידני!
                 </button>
             </div>
 
             <!-- Mannequin / Outfit Visualization -->
-            <div class="glass-card rounded-3xl p-6 shadow-xl shadow-sky-900/5 mannequin-container relative flex flex-col items-center justify-center min-h-[560px] border border-white overflow-hidden">
-                <span class="absolute top-4 right-4 text-xs font-bold text-sky-800 bg-sky-100/80 px-3.5 py-1.5 rounded-full border border-sky-200 z-10">
-                    <i class="fa-solid fa-user-astronaut text-pink-500 ml-1"></i> בובת ראווה
+            <div class="glass-card rounded-3xl p-6 shadow-2xl mannequin-container relative flex flex-col items-center justify-center min-h-[560px] overflow-hidden">
+                <span class="absolute top-4 right-4 text-xs font-bold text-cyan-300 bg-cyan-950/60 px-3.5 py-1.5 rounded-full border border-cyan-800/50 z-10">
+                    <i class="fa-solid fa-user-astronaut text-indigo-400 ml-1"></i> בובת ראווה
                 </span>
 
                 <!-- Mannequin Head & Neck Background Silhouette -->
                 <div class="absolute top-12 flex flex-col items-center opacity-20 pointer-events-none">
-                    <div class="w-16 h-20 bg-slate-400 rounded-full mb-1"></div>
-                    <div class="w-8 h-8 bg-slate-400 rounded-t-lg"></div>
+                    <div class="w-16 h-20 bg-slate-500 rounded-full mb-1"></div>
+                    <div class="w-8 h-8 bg-slate-500 rounded-t-lg"></div>
                 </div>
 
                 <!-- Mannequin Outline & Clothes Stack -->
                 <div class="relative w-64 h-[480px] flex flex-col items-center justify-between py-2 z-0 mt-8">
                     
                     <!-- Top Slot (Shirts Cutout) -->
-                    <div id="slot-top" class="item-slot w-52 h-40 border-2 border-dashed border-sky-200 rounded-2xl flex flex-col items-center justify-center text-slate-400 bg-white/60 shadow-sm overflow-hidden relative">
-                        <i class="fa-solid fa-shirt text-3xl mb-1 text-pink-300"></i>
+                    <div id="slot-top" class="item-slot w-52 h-40 border-2 border-dashed border-slate-700/80 rounded-2xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/40 overflow-hidden relative">
+                        <i class="fa-solid fa-shirt text-3xl mb-1 text-indigo-400/60"></i>
                         <span class="text-xs font-semibold">חולצה / טופ</span>
                     </div>
 
                     <!-- Bottom Slot (Pants Cutout) -->
-                    <div id="slot-bottom" class="item-slot w-44 h-48 border-2 border-dashed border-sky-200 rounded-2xl flex flex-col items-center justify-center text-slate-400 bg-white/60 shadow-sm overflow-hidden relative -mt-3">
-                        <i class="fa-solid fa-socks text-3xl mb-1 text-sky-300"></i>
+                    <div id="slot-bottom" class="item-slot w-44 h-48 border-2 border-dashed border-slate-700/80 rounded-2xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/40 overflow-hidden relative -mt-3">
+                        <i class="fa-solid fa-socks text-3xl mb-1 text-cyan-400/60"></i>
                         <span class="text-xs font-semibold">מכנסיים</span>
                     </div>
 
                     <!-- Shoes Slot -->
-                    <div id="slot-shoes" class="item-slot w-40 h-20 border-2 border-dashed border-sky-200 rounded-2xl flex flex-col items-center justify-center text-slate-400 bg-white/60 shadow-sm overflow-hidden relative">
-                        <i class="fa-solid fa-shoe-prints text-2xl mb-1 text-amber-300"></i>
+                    <div id="slot-shoes" class="item-slot w-40 h-20 border-2 border-dashed border-slate-700/80 rounded-2xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/40 overflow-hidden relative">
+                        <i class="fa-solid fa-shoe-prints text-2xl mb-1 text-teal-400/60"></i>
                         <span class="text-xs font-semibold">נעליים</span>
                     </div>
 
@@ -140,19 +146,19 @@
 
                 <!-- Action Buttons for Current Outfit -->
                 <div id="outfit-actions" class="hidden flex gap-3 mt-4 z-10 w-full max-w-xs">
-                    <button onclick="saveCurrentOutfit()" class="flex-1 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-1.5">
+                    <button onclick="saveCurrentOutfit()" class="flex-1 py-2.5 bg-rose-600/80 hover:bg-rose-600 border border-rose-500/40 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-heart"></i> שמור לוק
                     </button>
-                    <button onclick="shareCurrentOutfit()" class="flex-1 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-1.5">
+                    <button onclick="shareCurrentOutfit()" class="flex-1 py-2.5 bg-cyan-600/80 hover:bg-cyan-600 border border-cyan-500/40 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-share-nodes"></i> שתף לוק
                     </button>
                 </div>
             </div>
 
             <!-- Saved Outfits Gallery -->
-            <div class="glass-card rounded-3xl p-6 shadow-xl shadow-sky-900/5">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800">
-                    <i class="fa-solid fa-heart text-rose-500"></i> לוקים שמורים
+            <div class="glass-card rounded-3xl p-6 shadow-2xl">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-300">
+                    <i class="fa-solid fa-heart text-rose-400"></i> לוקים שמורים
                 </h2>
                 <div id="saved-outfits-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <!-- Saved outfits rendered dynamically -->
@@ -165,29 +171,29 @@
         <section class="lg:col-span-5 flex flex-col gap-6">
 
             <!-- Add Item Form -->
-            <div class="glass-card rounded-3xl p-6 shadow-xl shadow-sky-900/5">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800">
-                    <i class="fa-solid fa-plus-circle text-amber-500"></i> הוספת בגד חדש לארון
+            <div class="glass-card rounded-3xl p-6 shadow-2xl">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-300">
+                    <i class="fa-solid fa-plus-circle text-cyan-400"></i> הוספת בגד חדש לארון
                 </h2>
 
                 <form id="add-item-form" onsubmit="handleAddItem(event)" class="flex flex-col gap-3.5">
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1">שם הפריט</label>
-                        <input type="text" id="item-name" required placeholder="לדוגמה: חולצה מכופתרת כחולה" class="w-full bg-white border border-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-sm transition">
+                        <label class="block text-xs font-bold text-slate-400 mb-1">שם הפריט</label>
+                        <input type="text" id="item-name" required placeholder="לדוגמה: חולצה מכופתרת כחולה" class="w-full bg-slate-800/80 border border-slate-700/80 text-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">סוג פריט</label>
-                            <select id="item-type" required class="w-full bg-white border border-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-sm transition">
+                            <label class="block text-xs font-bold text-slate-400 mb-1">סוג פריט</label>
+                            <select id="item-type" required class="w-full bg-slate-800/80 border border-slate-700/80 text-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                                 <option value="top">חולצה / ג'קט</option>
                                 <option value="bottom">מכנסיים</option>
                                 <option value="shoes">נעליים</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">מזג אוויר</label>
-                            <select id="item-weather" required class="w-full bg-white border border-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-sm transition">
+                            <label class="block text-xs font-bold text-slate-400 mb-1">מזג אוויר</label>
+                            <select id="item-weather" required class="w-full bg-slate-800/80 border border-slate-700/80 text-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                                 <option value="all">כל השנה</option>
                                 <option value="summer">קיץ</option>
                                 <option value="winter">חורף</option>
@@ -198,8 +204,8 @@
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">אירוע מתאים</label>
-                            <select id="item-event" required class="w-full bg-white border border-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-sm transition">
+                            <label class="block text-xs font-bold text-slate-400 mb-1">אירוע מתאים</label>
+                            <select id="item-event" required class="w-full bg-slate-800/80 border border-slate-700/80 text-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                                 <option value="casual">יום-יומי</option>
                                 <option value="work">עבודה / פגישה</option>
                                 <option value="event">אירוע / ערב</option>
@@ -208,8 +214,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">צבע</label>
-                            <select id="item-color" class="w-full bg-white border border-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-sm transition">
+                            <label class="block text-xs font-bold text-slate-400 mb-1">צבע</label>
+                            <select id="item-color" class="w-full bg-slate-800/80 border border-slate-700/80 text-slate-200 rounded-2xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                                 <option value="auto">✨ זיהוי אוטומטי</option>
                                 <option value="black">שחור</option>
                                 <option value="white">לבן</option>
@@ -223,23 +229,23 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1">תמונת הפריט</label>
-                        <input type="file" id="item-image" accept="image/*" required class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sky-500 file:text-white hover:file:bg-sky-600 cursor-pointer">
+                        <label class="block text-xs font-bold text-slate-400 mb-1">תמונת הפריט</label>
+                        <input type="file" id="item-image" accept="image/*" required class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
                     </div>
 
-                    <button type="submit" id="submit-btn" class="mt-2 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl shadow-md transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> שמור בארון
+                    <button type="submit" id="submit-btn" class="mt-2 py-3 bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/50 text-indigo-200 font-bold rounded-2xl shadow-lg transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i> שמור בארון
                     </button>
                 </form>
             </div>
 
             <!-- Closet Inventory -->
-            <div class="glass-card rounded-3xl p-6 shadow-xl shadow-sky-900/5 flex-1 flex flex-col">
+            <div class="glass-card rounded-3xl p-6 shadow-2xl flex-1 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold flex items-center gap-2 text-slate-800">
-                        <i class="fa-solid fa-boxes-packing text-sky-500"></i> הארון שלי
+                    <h2 class="text-lg font-bold flex items-center gap-2 text-indigo-300">
+                        <i class="fa-solid fa-boxes-packing text-cyan-400"></i> הארון שלי
                     </h2>
-                    <button onclick="clearCloset()" class="text-[10px] text-rose-500 hover:underline">נקה ארון</button>
+                    <button onclick="clearCloset()" class="text-[10px] text-rose-400 hover:underline">נקה ארון</button>
                 </div>
 
                 <div id="closet-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-3 overflow-y-auto max-h-[320px] p-1">
@@ -293,7 +299,7 @@
                 img.src = event.target.result;
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const maxDim = 400; // Small lightweight dimensions
+                    const maxDim = 400;
                     let width = img.width;
                     let height = img.height;
 
@@ -311,7 +317,6 @@
 
                     canvas.width = width;
                     canvas.height = height;
-                    const ctx = canvas.getContext('canvas');
                     const context = canvas.getContext('2d');
                     context.drawImage(img, 0, 0, width, height);
 
@@ -377,11 +382,11 @@
                     if (selectedColor === 'auto') {
                         extractColorFromImage(compressedImage, (detectedColor) => {
                             saveNewItem(name, type, weather, event, detectedColor, compressedImage);
-                            btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> שמור בארון`;
+                            btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i> שמור בארון`;
                         });
                     } else {
                         saveNewItem(name, type, weather, event, selectedColor, compressedImage);
-                        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> שמור בארון`;
+                        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i> שמור בארון`;
                     }
                 });
             }
@@ -414,16 +419,16 @@
             document.getElementById('item-count').textContent = closet.length;
 
             if (closet.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-8 text-slate-400 text-xs font-medium">הארון ריק כרגע.<br>הוסף בגדים כדי להתחיל!</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-8 text-slate-500 text-xs font-medium">הארון ריק כרגע.<br>הוסף בגדים כדי להתחיל!</div>`;
                 return;
             }
 
             grid.innerHTML = closet.map(item => `
-                <div class="relative group bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm flex flex-col items-center p-2">
+                <div class="relative group bg-slate-800/60 rounded-2xl overflow-hidden border border-slate-700/60 flex flex-col items-center p-2">
                     <img src="${item.image}" class="w-full h-20 object-cover rounded-xl mb-1">
-                    <span class="text-[10px] text-slate-700 truncate w-full text-center font-bold">${item.name}</span>
-                    <span class="text-[9px] text-pink-500 font-semibold">${colorMap[item.color] || item.color}</span>
-                    <button onclick="removeItem(${item.id})" class="absolute top-1.5 left-1.5 bg-rose-500/90 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition shadow-sm">
+                    <span class="text-[10px] text-slate-300 truncate w-full text-center font-bold">${item.name}</span>
+                    <span class="text-[9px] text-cyan-400 font-semibold">${colorMap[item.color] || item.color}</span>
+                    <button onclick="removeItem(${item.id})" class="absolute top-1.5 left-1.5 bg-rose-600/90 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition shadow-sm">
                         ✕
                     </button>
                 </div>
@@ -497,13 +502,13 @@
                     <div class="w-full h-full ${cutoutClass} overflow-hidden relative">
                         <img src="${item.image}" class="w-full h-full object-cover">
                     </div>
-                    <div class="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-sm text-slate-800 text-[10px] text-center py-0.5 truncate px-2 flex justify-between items-center font-bold border-t border-slate-100 z-10">
+                    <div class="absolute bottom-0 inset-x-0 bg-slate-900/90 backdrop-blur-md text-slate-200 text-[10px] text-center py-0.5 truncate px-2 flex justify-between items-center font-bold border-t border-slate-800 z-10">
                         <span>${item.name}</span>
-                        <span class="text-pink-500 font-extrabold">${colorMap[item.color] || ''}</span>
+                        <span class="text-cyan-400 font-extrabold">${colorMap[item.color] || ''}</span>
                     </div>
                 `;
             } else {
-                slot.innerHTML = `<span class="text-xs text-slate-400">אין ${placeholder} מתאימה</span>`;
+                slot.innerHTML = `<span class="text-xs text-slate-500">אין ${placeholder} מתאימה</span>`;
             }
         }
 
@@ -540,23 +545,23 @@
         function renderSavedOutfits() {
             const grid = document.getElementById('saved-outfits-grid');
             if (savedOutfits.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-6 text-slate-400 text-xs font-medium">אין לוקים שמורים עדיין. לחץ על "שמור לוק" כשתמצא שילוב שאהבת!</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-6 text-slate-500 text-xs font-medium">אין לוקים שמורים עדיין. לחץ על "שמור לוק" כשתמצא שילוב שאהבת!</div>`;
                 return;
             }
 
             grid.innerHTML = savedOutfits.map(outfit => `
-                <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-sm flex flex-col justify-between relative group">
-                    <button onclick="removeSavedOutfit(${outfit.id})" class="absolute top-2 left-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow-sm z-10">
+                <div class="bg-slate-800/60 rounded-2xl p-3 border border-slate-700/60 flex flex-col justify-between relative group">
+                    <button onclick="removeSavedOutfit(${outfit.id})" class="absolute top-2 left-2 bg-rose-600 hover:bg-rose-700 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow-sm z-10">
                         ✕
                     </button>
-                    <div class="flex gap-2 mb-2 items-center justify-center bg-slate-50 p-2 rounded-xl">
+                    <div class="flex gap-2 mb-2 items-center justify-center bg-slate-900/60 p-2 rounded-xl border border-slate-800">
                         ${outfit.top ? `<img src="${outfit.top.image}" class="w-12 h-12 object-cover rounded-lg">` : ''}
                         ${outfit.bottom ? `<img src="${outfit.bottom.image}" class="w-12 h-12 object-cover rounded-lg">` : ''}
                         ${outfit.shoes ? `<img src="${outfit.shoes.image}" class="w-12 h-12 object-cover rounded-lg">` : ''}
                     </div>
-                    <div class="flex justify-between items-center text-[11px] text-slate-600 font-bold px-1">
+                    <div class="flex justify-between items-center text-[11px] text-slate-400 font-bold px-1">
                         <span>לוק מ-${outfit.date}</span>
-                        <button onclick="loadSavedOutfit(${outfit.id})" class="text-pink-500 hover:text-pink-600 font-extrabold flex items-center gap-1">
+                        <button onclick="loadSavedOutfit(${outfit.id})" class="text-cyan-400 hover:text-cyan-300 font-extrabold flex items-center gap-1">
                             הצג על הראווה <i class="fa-solid fa-arrow-up"></i>
                         </button>
                     </div>
