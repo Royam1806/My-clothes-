@@ -29,7 +29,6 @@
             border: 1px solid rgba(99, 102, 241, 0.2);
         }
         
-        /* Gazarot / Apparel Cutout Styles */
         .jacket-cutout {
             clip-path: polygon(15% 0%, 85% 0%, 100% 20%, 85% 35%, 80% 20%, 80% 100%, 20% 100%, 20% 20%, 15% 35%, 0% 20%);
         }
@@ -303,7 +302,7 @@
             try {
                 localStorage.setItem('smartstyle_closet', JSON.stringify(closet));
             } catch (e) {
-                alert("אזהרה: זיכרון הדפדפן מלא! כדאי למחוק פריטים ישנים.");
+                alert("אזהרה: זיכרון הדפדפן מלא! כדאי למחוק פריטים ישנים כדי לפנות מקום.");
             }
             renderCloset();
         }
@@ -314,13 +313,22 @@
         }
 
         function compressImage(file, callback) {
+            if (!file) {
+                alert("אנא בחר קובץ תמונה תקין");
+                return;
+            }
             const reader = new FileReader();
+            reader.onerror = function() {
+                alert("שגיאה בקריאת התמונה מהמכשיר.");
+            };
             reader.onload = function(event) {
                 const img = new Image();
-                img.src = event.target.result;
+                img.onerror = function() {
+                    alert("שגיאה בפיענוח פורמט התמונה.");
+                };
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const maxDim = 400;
+                    const maxDim = 320; // Size optimization for fast storage
                     let width = img.width;
                     let height = img.height;
 
@@ -341,38 +349,46 @@
                     const context = canvas.getContext('2d');
                     context.drawImage(img, 0, 0, width, height);
 
-                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
                     callback(compressedBase64);
-                }
+                };
+                img.src = event.target.result;
             };
             reader.readAsDataURL(file);
         }
 
         function extractColorFromImage(imgSrc, callback) {
             const img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.src = imgSrc;
-            img.onload = function () {
-                const canvas = document.createElement("canvas");
-                const ctx = canvas.getContext("2d");
-                canvas.width = 50;
-                canvas.height = 50;
-                ctx.drawImage(img, 0, 0, 50, 50);
-                const data = ctx.getImageData(0, 0, 50, 50).data;
-                
-                let r = 0, g = 0, b = 0, count = 0;
-                for (let i = 0; i < data.length; i += 16) {
-                    r += data[i];
-                    g += data[i + 1];
-                    b += data[i + 2];
-                    count++;
-                }
-                r = Math.floor(r / count);
-                g = Math.floor(g / count);
-                b = Math.floor(b / count);
-
-                callback(detectCategory(r, g, b));
+            // Removed crossOrigin to prevent CORS security errors on local Data URLs
+            img.onerror = function() {
+                callback("black"); // Fallback color on error
             };
+            img.onload = function () {
+                try {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+                    canvas.width = 50;
+                    canvas.height = 50;
+                    ctx.drawImage(img, 0, 0, 50, 50);
+                    const data = ctx.getImageData(0, 0, 50, 50).data;
+                    
+                    let r = 0, g = 0, b = 0, count = 0;
+                    for (let i = 0; i < data.length; i += 16) {
+                        r += data[i];
+                        g += data[i + 1];
+                        b += data[i + 2];
+                        count++;
+                    }
+                    r = Math.floor(r / count);
+                    g = Math.floor(g / count);
+                    b = Math.floor(b / count);
+
+                    callback(detectCategory(r, g, b));
+                } catch (e) {
+                    callback("black");
+                }
+            };
+            img.src = imgSrc;
         }
 
         function detectCategory(r, g, b) {
@@ -389,6 +405,7 @@
         function handleAddItem(e) {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> שומר...`;
 
             const name = document.getElementById('item-name').value;
@@ -400,16 +417,24 @@
 
             if (fileInput.files && fileInput.files[0]) {
                 compressImage(fileInput.files[0], (compressedImage) => {
+                    const finalizeSave = (color) => {
+                        saveNewItem(name, type, weather, event, color, compressedImage);
+                        btn.disabled = false;
+                        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i> שמור בארון`;
+                    };
+
                     if (selectedColor === 'auto') {
                         extractColorFromImage(compressedImage, (detectedColor) => {
-                            saveNewItem(name, type, weather, event, detectedColor, compressedImage);
-                            btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i> שמור בארון`;
+                            finalizeSave(detectedColor);
                         });
                     } else {
-                        saveNewItem(name, type, weather, event, selectedColor, compressedImage);
-                        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i> שמור בארון`;
+                        finalizeSave(selectedColor);
                     }
                 });
+            } else {
+                alert("אנא בחר תמונה להעלאה");
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i> שמור בארון`;
             }
         }
 
@@ -458,12 +483,10 @@
                     <span class="text-[10px] text-slate-300 truncate w-full text-center font-bold">${item.name}</span>
                     <span class="text-[9px] text-cyan-400 font-semibold">${colorMap[item.color] || item.color}</span>
                     
-                    <!-- Laundry Toggle Button -->
                     <button onclick="toggleLaundry(${item.id})" title="${item.inLaundry ? 'החזר מאזור הכביסה' : 'העבר לכביסה'}" class="absolute top-1.5 right-1.5 bg-slate-900/90 text-amber-400 hover:text-amber-300 rounded-full w-6 h-6 flex items-center justify-center text-[10px] shadow-sm z-10">
                         <i class="fa-solid fa-shirt"></i>
                     </button>
 
-                    <!-- Delete Button -->
                     <button onclick="removeItem(${item.id})" class="absolute top-1.5 left-1.5 bg-rose-600/90 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition shadow-sm z-10">
                         ✕
                     </button>
@@ -471,7 +494,6 @@
             `).join('');
         }
 
-        // Feature 1: Live Weather Fetching via Open-Meteo API
         function fetchLiveWeather() {
             const btnText = document.getElementById('weather-btn-text');
             btnText.textContent = "מזהה מיקום...";
@@ -487,7 +509,7 @@
                         const temp = Math.round(data.current_weather.temperature);
 
                         document.getElementById('weather-info-box').classList.remove('hidden');
-                        document.getElementById('weather-location').textContent = `📍 מזהה מזג אוויר מקומי`;
+                        document.getElementById('weather-location').textContent = `📍 מזג אוויר מקומי`;
                         document.getElementById('weather-temp').textContent = `${temp}°C`;
 
                         const weatherSelect = document.getElementById('weather-select');
@@ -517,7 +539,6 @@
             const selectedEvent = document.getElementById('event-select').value;
             const selectedWeather = document.getElementById('weather-select').value;
 
-            // Filter out items in laundry
             const activeCloset = closet.filter(i => !i.inLaundry);
 
             const filterByType = (type) => {
@@ -544,7 +565,6 @@
 
             const chosenTop = tops[Math.floor(Math.random() * tops.length)] || null;
 
-            // Optional Jacket logic for winter / transition weather
             let chosenJacket = null;
             if ((selectedWeather === 'winter' || selectedWeather === 'transition' || selectedWeather === 'all') && jackets.length > 0) {
                 if (Math.random() > 0.3) {
@@ -573,7 +593,7 @@
         }
 
         function displayOutfit(outfit) {
-            updateSlot('slot-jacket', outfit.jacket, 'ג'קט / מעיל', 'jacket-cutout');
+            updateSlot('slot-jacket', outfit.jacket, 'ג\'קט / מעיל', 'jacket-cutout');
             updateSlot('slot-top', outfit.top, 'חולצה', 'top-cutout');
             updateSlot('slot-bottom', outfit.bottom, 'מכנסיים', 'bottom-cutout');
             updateSlot('slot-shoes', outfit.shoes, 'נעליים', 'shoes-cutout');
@@ -681,7 +701,7 @@
                 }).catch(() => {});
             } else {
                 navigator.clipboard.writeText(text);
-                alert("פרטי הלוק הועתקו ללוח! תוכל להדביק ולשתף בווטסאפ.");
+                alert("פרטי הלוק הועתקו ללוח! תוכל להדביק ולשתף.");
             }
         }
 
