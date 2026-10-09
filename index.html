@@ -39,8 +39,8 @@
                     <i class="fa-solid fa-shirt text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-pink-400 bg-clip-text text-transparent">SmartStyle</h1>
-                    <p class="text-xs text-slate-400">הארון הדיגיטלי והסטייליסט האישי שלך</p>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-pink-400 bg-clip-text text-transparent">SmartStyle AI</h1>
+                    <p class="text-xs text-slate-400">ארון דיגיטלי להתאמת צבעים ולוקים חכמים</p>
                 </div>
             </div>
             <div class="text-xs bg-slate-800 text-slate-300 px-3 py-1.5 rounded-full border border-slate-700">
@@ -57,7 +57,7 @@
             <!-- Outfit Generator Controls -->
             <div class="glass-card rounded-2xl p-5 shadow-xl">
                 <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-300">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> הרכבת לוק אישי
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> הרכבת לוק חכם ומותאם צבעים
                 </h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
@@ -65,7 +65,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-400 mb-1.5">לאן הולכים?</label>
                         <select id="event-select" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
-                            <option value="all">הכל מתאים (אקראי)</option>
+                            <option value="all">הכל מתאים (אקראי חכם)</option>
                             <option value="work">💼 עבודה (FlyDubai)</option>
                             <option value="event">🎉 אירוע / יציאה</option>
                             <option value="gym">🏋️‍♂️ חדר כושר</option>
@@ -87,7 +87,7 @@
                 </div>
 
                 <button onclick="generateOutfit()" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition transform active:scale-95">
-                    <i class="fa-solid fa-shuffle"></i> התאם לי לוק מושלם!
+                    <i class="fa-solid fa-palette"></i> התאם לי לוק עם צבעים תואמים!
                 </button>
             </div>
 
@@ -135,7 +135,7 @@
                 <form id="add-item-form" onsubmit="handleAddItem(event)" class="flex flex-col gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-slate-400 mb-1">שם הפריט</label>
-                        <input type="text" id="item-name" required placeholder="לדוגמה: חולצה שחורה מכופתרת" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                        <input type="text" id="item-name" required placeholder="לדוגמה: חולצה מכופתרת כחולה" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
@@ -158,15 +158,30 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1">אירועים מתאימים</label>
-                        <select id="item-event" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
-                            <option value="casual">יום-יומי</option>
-                            <option value="work">עבודה</option>
-                            <option value="event">אירוע / יציאה</option>
-                            <option value="gym">חדר כושר</option>
-                            <option value="nova">טיול עם נובה</option>
-                        </select>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">אירועים מתאימים</label>
+                            <select id="item-event" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                                <option value="casual">יום-יומי</option>
+                                <option value="work">עבודה</option>
+                                <option value="event">אירוע / יציאה</option>
+                                <option value="gym">חדר כושר</option>
+                                <option value="nova">טיול עם נובה</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">צבע (יזוהה גם אוטומטית)</label>
+                            <select id="item-color" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                                <option value="auto">✨ זיהוי אוטומטי מתמונה</option>
+                                <option value="black">שחור</option>
+                                <option value="white">לבן</option>
+                                <option value="grey">אפור</option>
+                                <option value="blue">כחול / ג'ינס</option>
+                                <option value="beige">בז' / חום</option>
+                                <option value="green">ירוק</option>
+                                <option value="red">אדום</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div>
@@ -198,9 +213,62 @@
     <script>
         let closet = JSON.parse(localStorage.getItem('smartstyle_closet')) || [];
 
+        const colorMap = {
+            black: "שחור", white: "לבן", grey: "אפור",
+            blue: "כחול", beige: "בז'", green: "ירוק", red: "אדום"
+        };
+
+        const matchingRules = {
+            black: ['black', 'white', 'grey', 'blue', 'beige', 'green', 'red'],
+            white: ['black', 'white', 'grey', 'blue', 'beige', 'green', 'red'],
+            grey: ['black', 'white', 'grey', 'blue', 'beige'],
+            blue: ['black', 'white', 'grey', 'blue', 'beige'],
+            beige: ['black', 'white', 'blue', 'beige', 'green'],
+            green: ['black', 'white', 'beige'],
+            red: ['black', 'white', 'blue']
+        };
+
         function saveCloset() {
             localStorage.setItem('smartstyle_closet', JSON.stringify(closet));
             renderCloset();
+        }
+
+        function extractColorFromImage(imgSrc, callback) {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = imgSrc;
+            img.onload = function () {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+                canvas.width = 50;
+                canvas.height = 50;
+                ctx.drawImage(img, 0, 0, 50, 50);
+                const data = ctx.getImageData(0, 0, 50, 50).data;
+                
+                let r = 0, g = 0, b = 0, count = 0;
+                for (let i = 0; i < data.length; i += 16) {
+                    r += data[i];
+                    g += data[i + 1];
+                    b += data[i + 2];
+                    count++;
+                }
+                r = Math.floor(r / count);
+                g = Math.floor(g / count);
+                b = Math.floor(b / count);
+
+                callback(detectCategory(r, g, b));
+            };
+        }
+
+        function detectCategory(r, g, b) {
+            const brightness = (r + g + b) / 3;
+            if (brightness < 60) return "black";
+            if (brightness > 200) return "white";
+            if (Math.abs(r - g) < 20 && Math.abs(g - b) < 20) return "grey";
+            if (b > r && b > g) return "blue";
+            if (g > r && g > b) return "green";
+            if (r > g && r > b) return (g > 100) ? "beige" : "red";
+            return "black";
         }
 
         function handleAddItem(e) {
@@ -209,25 +277,34 @@
             const type = document.getElementById('item-type').value;
             const weather = document.getElementById('item-weather').value;
             const event = document.getElementById('item-event').value;
+            const selectedColor = document.getElementById('item-color').value;
             const fileInput = document.getElementById('item-image');
 
             if (fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const newItem = {
-                        id: Date.now(),
-                        name,
-                        type,
-                        weather,
-                        event,
-                        image: e.target.result
-                    };
-                    closet.push(newItem);
-                    saveCloset();
-                    document.getElementById('add-item-form').reset();
+                    const imageSrc = e.target.result;
+                    
+                    if (selectedColor === 'auto') {
+                        extractColorFromImage(imageSrc, (detectedColor) => {
+                            saveNewItem(name, type, weather, event, detectedColor, imageSrc);
+                        });
+                    } else {
+                        saveNewItem(name, type, weather, event, selectedColor, imageSrc);
+                    }
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             }
+        }
+
+        function saveNewItem(name, type, weather, event, color, image) {
+            const newItem = {
+                id: Date.now(),
+                name, type, weather, event, color, image
+            };
+            closet.push(newItem);
+            saveCloset();
+            document.getElementById('add-item-form').reset();
         }
 
         function removeItem(id) {
@@ -247,7 +324,8 @@
             grid.innerHTML = closet.map(item => `
                 <div class="relative group bg-slate-800 rounded-xl overflow-hidden border border-slate-700 flex flex-col items-center p-2">
                     <img src="${item.image}" class="w-full h-20 object-cover rounded-lg mb-1">
-                    <span class="text-[10px] text-slate-300 truncate w-full text-center">${item.name}</span>
+                    <span class="text-[10px] text-slate-300 truncate w-full text-center font-bold">${item.name}</span>
+                    <span class="text-[9px] text-indigo-400">${colorMap[item.color] || item.color}</span>
                     <button onclick="removeItem(${item.id})" class="absolute top-1 left-1 bg-red-600/80 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition">
                         ✕
                     </button>
@@ -259,7 +337,7 @@
             const selectedEvent = document.getElementById('event-select').value;
             const selectedWeather = document.getElementById('weather-select').value;
 
-            const filterItem = (type) => {
+            const filterByType = (type) => {
                 let items = closet.filter(i => i.type === type);
                 if (selectedEvent !== 'all') {
                     items = items.filter(i => i.event === selectedEvent || i.event === 'casual');
@@ -267,19 +345,40 @@
                 if (selectedWeather !== 'all') {
                     items = items.filter(i => i.weather === selectedWeather || i.weather === 'all');
                 }
-                if (items.length === 0) {
-                    items = closet.filter(i => i.type === type); // Fallback to any item of type
-                }
-                return items[Math.floor(Math.random() * items.length)];
+                if (items.length === 0) items = closet.filter(i => i.type === type);
+                return items;
             };
 
-            const top = filterItem('top');
-            const bottom = filterItem('bottom');
-            const shoes = filterItem('shoes');
+            const tops = filterByType('top');
+            const bottoms = filterByType('bottom');
+            const shoesList = filterByType('shoes');
 
-            updateSlot('slot-top', top, 'חולצה');
-            updateSlot('slot-bottom', bottom, 'מכנסיים');
-            updateSlot('slot-shoes', shoes, 'נעליים');
+            if (tops.length === 0 && bottoms.length === 0 && shoesList.length === 0) {
+                alert("אנא הוסף פריטים לארון ראשית!");
+                return;
+            }
+
+            const chosenTop = tops[Math.floor(Math.random() * tops.length)];
+
+            let compatibleBottoms = bottoms;
+            if (chosenTop && chosenTop.color && matchingRules[chosenTop.color]) {
+                const allowedColors = matchingRules[chosenTop.color];
+                compatibleBottoms = bottoms.filter(b => allowedColors.includes(b.color));
+                if (compatibleBottoms.length === 0) compatibleBottoms = bottoms;
+            }
+            const chosenBottom = compatibleBottoms[Math.floor(Math.random() * compatibleBottoms.length)];
+
+            let compatibleShoes = shoesList;
+            if (chosenBottom && chosenBottom.color && matchingRules[chosenBottom.color]) {
+                const allowedColors = matchingRules[chosenBottom.color];
+                compatibleShoes = shoesList.filter(s => allowedColors.includes(s.color));
+                if (compatibleShoes.length === 0) compatibleShoes = shoesList;
+            }
+            const chosenShoes = compatibleShoes[Math.floor(Math.random() * compatibleShoes.length)];
+
+            updateSlot('slot-top', chosenTop, 'חולצה');
+            updateSlot('slot-bottom', chosenBottom, 'מכנסיים');
+            updateSlot('slot-shoes', chosenShoes, 'נעליים');
         }
 
         function updateSlot(slotId, item, placeholder) {
@@ -287,8 +386,9 @@
             if (item) {
                 slot.innerHTML = `
                     <img src="${item.image}" class="w-full h-full object-cover">
-                    <div class="absolute bottom-0 inset-x-0 bg-slate-900/80 text-white text-[10px] text-center py-0.5 truncate px-1">
-                        ${item.name}
+                    <div class="absolute bottom-0 inset-x-0 bg-slate-900/90 text-white text-[10px] text-center py-0.5 truncate px-1 flex justify-between px-2">
+                        <span>${item.name}</span>
+                        <span class="text-indigo-400 font-bold">${colorMap[item.color] || ''}</span>
                     </div>
                 `;
             } else {
