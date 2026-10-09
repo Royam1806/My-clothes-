@@ -137,6 +137,26 @@
                     </div>
 
                 </div>
+
+                <!-- Action Buttons for Current Outfit -->
+                <div id="outfit-actions" class="hidden flex gap-3 mt-4 z-10 w-full max-w-xs">
+                    <button onclick="saveCurrentOutfit()" class="flex-1 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-heart"></i> שמור לוק
+                    </button>
+                    <button onclick="shareCurrentOutfit()" class="flex-1 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-share-nodes"></i> שתף לוק
+                    </button>
+                </div>
+            </div>
+
+            <!-- Saved Outfits Gallery -->
+            <div class="glass-card rounded-3xl p-6 shadow-xl shadow-sky-900/5">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800">
+                    <i class="fa-solid fa-heart text-rose-500"></i> לוקים שמורים
+                </h2>
+                <div id="saved-outfits-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Saved outfits rendered dynamically -->
+                </div>
             </div>
 
         </section>
@@ -230,6 +250,8 @@
 
     <script>
         let closet = JSON.parse(localStorage.getItem('smartstyle_closet')) || [];
+        let savedOutfits = JSON.parse(localStorage.getItem('smartstyle_saved_outfits')) || [];
+        let currentOutfit = { top: null, bottom: null, shoes: null };
 
         const colorMap = {
             black: "שחור", white: "לבן", grey: "אפור",
@@ -249,6 +271,11 @@
         function saveCloset() {
             localStorage.setItem('smartstyle_closet', JSON.stringify(closet));
             renderCloset();
+        }
+
+        function saveSavedOutfits() {
+            localStorage.setItem('smartstyle_saved_outfits', JSON.stringify(savedOutfits));
+            renderSavedOutfits();
         }
 
         function extractColorFromImage(imgSrc, callback) {
@@ -376,7 +403,7 @@
                 return;
             }
 
-            const chosenTop = tops[Math.floor(Math.random() * tops.length)];
+            const chosenTop = tops[Math.floor(Math.random() * tops.length)] || null;
 
             let compatibleBottoms = bottoms;
             if (chosenTop && chosenTop.color && matchingRules[chosenTop.color]) {
@@ -384,7 +411,7 @@
                 compatibleBottoms = bottoms.filter(b => allowedColors.includes(b.color));
                 if (compatibleBottoms.length === 0) compatibleBottoms = bottoms;
             }
-            const chosenBottom = compatibleBottoms[Math.floor(Math.random() * compatibleBottoms.length)];
+            const chosenBottom = compatibleBottoms[Math.floor(Math.random() * compatibleBottoms.length)] || null;
 
             let compatibleShoes = shoesList;
             if (chosenBottom && chosenBottom.color && matchingRules[chosenBottom.color]) {
@@ -392,11 +419,23 @@
                 compatibleShoes = shoesList.filter(s => allowedColors.includes(s.color));
                 if (compatibleShoes.length === 0) compatibleShoes = shoesList;
             }
-            const chosenShoes = compatibleShoes[Math.floor(Math.random() * compatibleShoes.length)];
+            const chosenShoes = compatibleShoes[Math.floor(Math.random() * compatibleShoes.length)] || null;
 
-            updateSlot('slot-top', chosenTop, 'חולצה', 'top-cutout');
-            updateSlot('slot-bottom', chosenBottom, 'מכנסיים', 'bottom-cutout');
-            updateSlot('slot-shoes', chosenShoes, 'נעליים', 'shoes-cutout');
+            currentOutfit = { top: chosenTop, bottom: chosenBottom, shoes: chosenShoes };
+            displayOutfit(currentOutfit);
+        }
+
+        function displayOutfit(outfit) {
+            updateSlot('slot-top', outfit.top, 'חולצה', 'top-cutout');
+            updateSlot('slot-bottom', outfit.bottom, 'מכנסיים', 'bottom-cutout');
+            updateSlot('slot-shoes', outfit.shoes, 'נעליים', 'shoes-cutout');
+
+            const actionsDiv = document.getElementById('outfit-actions');
+            if (outfit.top || outfit.bottom || outfit.shoes) {
+                actionsDiv.classList.remove('hidden');
+            } else {
+                actionsDiv.classList.add('hidden');
+            }
         }
 
         function updateSlot(slotId, item, placeholder, cutoutClass) {
@@ -416,7 +455,87 @@
             }
         }
 
+        function saveCurrentOutfit() {
+            if (!currentOutfit.top && !currentOutfit.bottom && !currentOutfit.shoes) return;
+            
+            const newSavedOutfit = {
+                id: Date.now(),
+                top: currentOutfit.top,
+                bottom: currentOutfit.bottom,
+                shoes: currentOutfit.shoes,
+                date: new Date().toLocaleDateString('he-IL')
+            };
+
+            savedOutfits.unshift(newSavedOutfit);
+            saveSavedOutfits();
+            alert("הלוק נשמר בהצלחה בלוקים השמורים! 💖");
+        }
+
+        function removeSavedOutfit(id) {
+            savedOutfits = savedOutfits.filter(o => o.id !== id);
+            saveSavedOutfits();
+        }
+
+        function loadSavedOutfit(id) {
+            const outfit = savedOutfits.find(o => o.id === id);
+            if (outfit) {
+                currentOutfit = { top: outfit.top, bottom: outfit.bottom, shoes: outfit.shoes };
+                displayOutfit(currentOutfit);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function renderSavedOutfits() {
+            const grid = document.getElementById('saved-outfits-grid');
+            if (savedOutfits.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-6 text-slate-400 text-xs font-medium">אין לוקים שמורים עדיין. לחץ על "שמור לוק" כשתמצא שילוב שאהבת!</div>`;
+                return;
+            }
+
+            grid.innerHTML = savedOutfits.map(outfit => `
+                <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-sm flex flex-col justify-between relative group">
+                    <button onclick="removeSavedOutfit(${outfit.id})" class="absolute top-2 left-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow-sm z-10">
+                        ✕
+                    </button>
+                    <div class="flex gap-2 mb-2 items-center justify-center bg-slate-50 p-2 rounded-xl">
+                        ${outfit.top ? `<img src="${outfit.top.image}" class="w-12 h-12 object-cover rounded-lg">` : ''}
+                        ${outfit.bottom ? `<img src="${outfit.bottom.image}" class="w-12 h-12 object-cover rounded-lg">` : ''}
+                        ${outfit.shoes ? `<img src="${outfit.shoes.image}" class="w-12 h-12 object-cover rounded-lg">` : ''}
+                    </div>
+                    <div class="flex justify-between items-center text-[11px] text-slate-600 font-bold px-1">
+                        <span>לוק מ-${outfit.date}</span>
+                        <button onclick="loadSavedOutfit(${outfit.id})" class="text-pink-500 hover:text-pink-600 font-extrabold flex items-center gap-1">
+                            הצג על הראווה <i class="fa-solid fa-arrow-up"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function shareCurrentOutfit() {
+            const details = [];
+            if (currentOutfit.top) details.push(`חולצה: ${currentOutfit.top.name}`);
+            if (currentOutfit.bottom) details.push(`מכנסיים: ${currentOutfit.bottom.name}`);
+            if (currentOutfit.shoes) details.push(`נעליים: ${currentOutfit.shoes.name}`);
+
+            if (details.length === 0) return;
+
+            const text = `✨ בדוק את הלוק שהרכבתי ב-SmartStyle:\n` + details.join('\n');
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'SmartStyle Outfit',
+                    text: text,
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(text);
+                alert("פרטי הלוק הועתקו ללוח! תוכל להדביק ולשתף בווטסאפ.");
+            }
+        }
+
         renderCloset();
+        renderSavedOutfits();
     </script>
 </body>
 </html>
