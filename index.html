@@ -227,7 +227,7 @@
                         <input type="file" id="item-image" accept="image/*" required class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sky-500 file:text-white hover:file:bg-sky-600 cursor-pointer">
                     </div>
 
-                    <button type="submit" class="mt-2 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl shadow-md transition flex items-center justify-center gap-2">
+                    <button type="submit" id="submit-btn" class="mt-2 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl shadow-md transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> שמור בארון
                     </button>
                 </form>
@@ -235,9 +235,12 @@
 
             <!-- Closet Inventory -->
             <div class="glass-card rounded-3xl p-6 shadow-xl shadow-sky-900/5 flex-1 flex flex-col">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800">
-                    <i class="fa-solid fa-boxes-packing text-sky-500"></i> הארון שלי
-                </h2>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold flex items-center gap-2 text-slate-800">
+                        <i class="fa-solid fa-boxes-packing text-sky-500"></i> הארון שלי
+                    </h2>
+                    <button onclick="clearCloset()" class="text-[10px] text-rose-500 hover:underline">נקה ארון</button>
+                </div>
 
                 <div id="closet-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-3 overflow-y-auto max-h-[320px] p-1">
                     <!-- Items rendered here dynamically -->
@@ -269,13 +272,54 @@
         };
 
         function saveCloset() {
-            localStorage.setItem('smartstyle_closet', JSON.stringify(closet));
+            try {
+                localStorage.setItem('smartstyle_closet', JSON.stringify(closet));
+            } catch (e) {
+                alert("אזהרה: זיכרון הדפדפן מלא! כדאי למחוק פריטים ישנים.");
+            }
             renderCloset();
         }
 
         function saveSavedOutfits() {
             localStorage.setItem('smartstyle_saved_outfits', JSON.stringify(savedOutfits));
             renderSavedOutfits();
+        }
+
+        // Compress image to fit localStorage limits easily
+        function compressImage(file, callback) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 400; // Small lightweight dimensions
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxDim) {
+                            height *= maxDim / width;
+                            width = maxDim;
+                        }
+                    } else {
+                        if (height > maxDim) {
+                            width *= maxDim / height;
+                            height = maxDim;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('canvas');
+                    const context = canvas.getContext('2d');
+                    context.drawImage(img, 0, 0, width, height);
+
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    callback(compressedBase64);
+                }
+            };
+            reader.readAsDataURL(file);
         }
 
         function extractColorFromImage(imgSrc, callback) {
@@ -318,6 +362,9 @@
 
         function handleAddItem(e) {
             e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> שומר...`;
+
             const name = document.getElementById('item-name').value;
             const type = document.getElementById('item-type').value;
             const weather = document.getElementById('item-weather').value;
@@ -326,19 +373,17 @@
             const fileInput = document.getElementById('item-image');
 
             if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imageSrc = e.target.result;
-                    
+                compressImage(fileInput.files[0], (compressedImage) => {
                     if (selectedColor === 'auto') {
-                        extractColorFromImage(imageSrc, (detectedColor) => {
-                            saveNewItem(name, type, weather, event, detectedColor, imageSrc);
+                        extractColorFromImage(compressedImage, (detectedColor) => {
+                            saveNewItem(name, type, weather, event, detectedColor, compressedImage);
+                            btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> שמור בארון`;
                         });
                     } else {
-                        saveNewItem(name, type, weather, event, selectedColor, imageSrc);
+                        saveNewItem(name, type, weather, event, selectedColor, compressedImage);
+                        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> שמור בארון`;
                     }
-                };
-                reader.readAsDataURL(fileInput.files[0]);
+                });
             }
         }
 
@@ -355,6 +400,13 @@
         function removeItem(id) {
             closet = closet.filter(item => item.id !== id);
             saveCloset();
+        }
+
+        function clearCloset() {
+            if (confirm("האם אתה בטוח שברצונך למחוק את כל הפריטים בארון?")) {
+                closet = [];
+                saveCloset();
+            }
         }
 
         function renderCloset() {
